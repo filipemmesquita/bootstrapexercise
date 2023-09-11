@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+  <title>Registrar Funcionário</title>
+  <head>
+     <style>
+      html, body {
+      display: flex;
+      justify-content: center;
+      font-size: 15px;
+      }
+      .formcontainer {
+      text-align: center;
+      margin: 24px 50px 12px;
+      }
+      .container {
+      padding: 16px 0;
+      text-align:left;
+      }
+      input {
+      width: 100%;
+      padding: 16px 8px;
+      display: inline-block;
+      box-sizing: border-box;
+      }
+      </style>
+  </head>
+  <body>
+    <form action="">
+      <h1>Registrar Funcionário</h1>
+      <div class="formcontainer">
+      <div class="container">
+        <label for="nome"><strong>Nome</strong></label>
+        <input type="text" placeholder="Nome do funcionário" name="nome" id="nome" required>
+        <label for="idade"><strong>Idade</strong></label>
+        <input type="number" placeholder="Idade deste funcionário" id="idade" required>
+        <label for="cargo"><strong>Cargo</strong></label>
+        <input type="text" placeholder="Cargo do Funcionário" name="cargo" id="cargo" required>
+        <label for="departamento"><strong>Departamento</strong></label>
+        <input type="text" placeholder="Departamento, no caso deste funcionário ser um gerente" name="departamento" id="departamento">
+        <label for="linguagem"><strong>Linguagem de Programação</strong></label>
+        <input type="text" placeholder="Linguagem, no caso deste funcionario ser um desenvolvedor" name="linguagem" id="linguagem">
+      </div>
+      <button type="button" onclick="registrar()"><strong>REGISTRAR</strong></button>
+    </form>
+    <section>
+      <h3>Apresentação de funcionários</h3>
+      <div id="apresentacao">
+        
+      </div>
+    </section>
+  </body>
+  <script>
+    class funcionario{
+        constructor(nome, idade, cargo){
+            this._nome=nome;
+            this._idade=idade;
+            this._cargo=cargo;
+        }    
+        set nome(value){
+            this._nome=value
+        }
+        get nome(){
+            return this._nome;
+        }
+        set idade(value){
+            this._idade=value
+        }
+        get idade(){
+            return this._idade;
+        }
+        set cargo(value){
+            this._cargo=value
+        }
+        get cargo(){
+            return this._cargo;
+        }
+        seApresentar(){
+            return `Apresentando funcionario(a) ${this.nome}, de ${this.idade} anos, do cargo ${this.cargo}.`;
+        }
+        trabalhar(){
+            return `Funcionário(a) ${this.nome} está a trabalhar no cargo ${this.cargo}.`;
+        }
+
+    }
+
+    class gerente extends funcionario{
+        constructor (nome,idade,cargo,departamento){
+            super(nome,idade, cargo);
+            this._departamento=departamento;
+
+        }
+        set departamento(value){
+            this._departamento=value
+        }
+        get departamento(){
+            return this._departamento;
+        }
+        gerenciar(){
+           return`${this.nome}, gerente do ${this.departamento} está a gerenciar.`;
+        }
+    }
+    class desenvolvedor extends funcionario{
+        constructor (nome,idade,cargo,linguagem){
+            super(nome,idade, cargo);
+            this._linguagem=linguagem;
+        }
+        set linguagem(value){
+            this._linguagem=value
+        }
+        get linguagem(){
+            return this._linguagem;
+        }
+        programar(){
+            return `A pessoa desenvolvedora ${this.nome} está a programar em ${this.linguagem}.`;
+        }
+    }
+    const funcionarios=[];
+    function registrar(){
+      let nomeForm = document.getElementById('nome').value;
+      let idadeForm  = document.getElementById('idade').value;
+      let cargoForm = document.getElementById('cargo').value;
+      let departamentoForm = document.getElementById('departamento').value;
+      let linguagemForm = document.getElementById('linguagem').value;
+      try {
+        if(!nomeForm||!idadeForm||!cargoForm){
+          throw new Error("Faltou preencher algum campo!")
+        }
+        else if((departamentoForm)&&(linguagemForm)){
+          throw new Error("Preencha ou departamento ou linguagem ou nenhum dos dois! Preencher os dois é inválido!");
+        }
+        else if(departamentoForm){
+          const novoFuncionario = new gerente(nomeForm,idadeForm,cargoForm,departamentoForm);
+          funcionarios.push(novoFuncionario);
+        }
+        else if(linguagemForm){
+          const novoFuncionario = new desenvolvedor(nomeForm,idadeForm,cargoForm,linguagemForm);
+          funcionarios.push(novoFuncionario);
+        }
+        else{
+          const novoFuncionario = new funcionario(nomeForm,idadeForm,cargoForm);
+          funcionarios.push(novoFuncionario);
+        }
+        const element = document.getElementById("apresentacao");
+        element.innerHTML="";
+        funcionarios.forEach(imprimir);
+      }
+      catch(e){
+        exibirErro(e.message);
+      }
+    };
+    function exibirErro(mensagem){
+      alert("Erro: "+mensagem)
+    };
+    function imprimir(funcionario){
+      const element = document.getElementById("apresentacao");
+      const para1 = document.createElement("p");
+      const apresenta = funcionario.seApresentar();
+      const node1 = document.createTextNode(apresenta);
+      para1.appendChild(node1);
+      element.appendChild(para1);
+      const para2 = document.createElement("p");
+      const trabalha = funcionario.trabalhar();
+      const node2 = document.createTextNode(trabalha);
+      para2.appendChild(node2);
+      element.appendChild(para2);
+      
+      if(funcionario.departamento){
+        const para3 = document.createElement("p");
+        const gerencia = funcionario.gerenciar();
+        const node3 = document.createTextNode(gerencia);
+        para3.appendChild(node3);
+        element.appendChild(para3);
+      }
+      if(funcionario.linguagem){
+        const para3 = document.createElement("p");
+        const programa = funcionario.programar();
+        const node3 = document.createTextNode(programa);
+        para3.appendChild(node3);
+        element.appendChild(para3);
+      }
+      const linebreak=document.createElement("br");
+      element.appendChild(linebreak)
+    };
+  </script>
+</html>
